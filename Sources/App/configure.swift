@@ -1,12 +1,21 @@
+import Vapor
 import Fluent
-import FluentSQLiteDriver
+import FluentPostgresDriver
+
 import GraphQLKit
 import GraphiQLVapor
 import Vapor
 
+extension Application {
+    static let databaseUrl = URL(string: "postgres://app_collection@localhost:5432/app_collection")!
+}
+
 // configures your application
 public func configure(_ app: Application) throws {
-    app.databases.use(.sqlite(.memory), as: .sqlite)
+    
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    
+    try app.databases.use(.postgres(url: Application.databaseUrl), as: .psql)
     
     app.http.server.configuration.port = 8081
     app.migrations.add(MigratePeople())
