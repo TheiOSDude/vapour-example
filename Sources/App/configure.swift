@@ -17,14 +17,13 @@ public func configure(_ app: Application) throws {
     
     try app.databases.use(.postgres(url: Application.databaseUrl), as: .psql)
     
-    app.http.server.configuration.port = 8081
     app.migrations.add(MigratePeople())
     try app.autoMigrate().wait()
     
     // Enable GraphiQL web page to send queries to the GraphQL endpoint.
-    if !app.environment.isRelease {
+//    if !app.environment.isRelease {
       app.enableGraphiQL()
-    }
+    //}
     
     app.register(graphQLSchema: schema, withResolver: Resolver())
 }
