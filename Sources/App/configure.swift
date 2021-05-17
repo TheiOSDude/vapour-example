@@ -17,7 +17,7 @@ extension Environment {
     }
     
     static var debugURL: URL {
-        return URL(string: "postgres://leeburrows@localhost/app_collection")!
+        return URL(string: "postgres://leeburrows@localhost/carsOnTrack")!
     }
 }
 
@@ -27,16 +27,21 @@ public func configure(_ app: Application) throws {
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     let url = app.environment.isRelease ? Environment.databaseURL : Environment.debugURL
     
-    if var postgresConfig = PostgresConfiguration(url: url) {
-        postgresConfig.tlsConfiguration = .forClient(certificateVerification: .none)
-        app.databases.use(.postgres(
-            configuration: postgresConfig
-        ), as: .psql)
+    if app.environment.isRelease {
+        if var postgresConfig = PostgresConfiguration(url: url) {
+            postgresConfig.tlsConfiguration = .forClient(certificateVerification: .none)
+            app.databases.use(.postgres(
+                configuration: postgresConfig
+            ), as: .psql)
+        } else {
+            exit(-1)
+        }
     } else {
-        exit(-1)
+        try app.databases.use(.postgres(url: Environment.debugURL), as: .psql)
     }
+ 
     
-    app.migrations.add(MigratePeople())
+    app.migrations.add(MigrateCircuits())
     try app.autoMigrate().wait()
     
     // Enable GraphiQL web page to send queries to the GraphQL endpoint.

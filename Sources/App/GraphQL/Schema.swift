@@ -11,24 +11,22 @@ import Vapor
 let schema = try! Schema<Resolver, Request> {
   Scalar(UUID.self)
 
-  Type(People.self) {
+  Type(Circuit.self) {
     Field("id", at: \.id)
-    Field("firstName", at: \.firstName)
-    Field("lastName", at: \.lastName)
-    Field("petsNames", at: \.petsNames)
+    Field("name", at: \.name)
+    Field("countryCode", at: \.countryCode)
   }
 
   Query {
-    Field("people", at: Resolver.getAllPeople)
+    Field("circuit", at: Resolver.getAllCircuits)
   }
     Mutation {
-      Field("createPeople", at: Resolver.createPerson) {
-        Argument("firstName", at: \.firstName)
-        Argument("lastName", at: \.lastName)
-        Argument("petsNames", at: \.petsNames)
+      Field("createCircuit", at: Resolver.createCircuit) {
+        Argument("name", at: \.name)
+        Argument("countryCode", at: \.countryCode)
       }
 
-      Field("deletePerson", at: Resolver.deletePerson) {
+      Field("deleteCircuit", at: Resolver.deleteCircuit) {
         Argument("id", at: \.id)
       }
     }

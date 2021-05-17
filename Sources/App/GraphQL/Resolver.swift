@@ -9,40 +9,38 @@ import Graphiti
 import Vapor
 
 final class Resolver {
-    func getAllPeople(
+    func getAllCircuits(
         request: Request,
         arguments: NoArguments
-    ) throws -> EventLoopFuture<[People]> {
-        People.query(on: request.db).all()
+    ) throws -> EventLoopFuture<[Circuit]> {
+        Circuit.query(on: request.db).all()
     }
     
-    struct CreatePersonArguments: Codable {
-        let firstName: String
-        let lastName: String
-        let petsNames: [String]
+    struct CreateCircuitArguments: Codable {
+        let name: String
+        let countryCode: String
     }
     
-    func createPerson(
+    func createCircuit(
         request: Request,
-        arguments: CreatePersonArguments
-    ) throws -> EventLoopFuture<People> {
-        let person = People(
-            firstName: arguments.firstName,
-            lastName: arguments.lastName,
-            petsNames: arguments.petsNames
+        arguments: CreateCircuitArguments
+    ) throws -> EventLoopFuture<Circuit> {
+        let circuit = Circuit(
+            name: arguments.name,
+            countryCode: arguments.countryCode
         )
-        return person.create(on: request.db).map { person }
+        return circuit.create(on: request.db).map { circuit }
     }
     
-    struct DeletePersonArguments: Codable {
+    struct DeleteCircuitArguments: Codable {
         let id: UUID
     }
     
-    func deletePerson(
+    func deleteCircuit(
         request: Request,
-        arguments: DeletePersonArguments
+        arguments: DeleteCircuitArguments
     ) -> EventLoopFuture<Bool> {
-        People.find(arguments.id, on: request.db)
+        Circuit.find(arguments.id, on: request.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: request.db) }
             .transform(to: true)

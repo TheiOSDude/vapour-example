@@ -8,17 +8,16 @@
 import Foundation
 import Fluent
 
-struct MigratePeople: Migration {
+struct MigrateCircuits: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
-        return database.schema("people")
+        return database.schema("circuit")
             .id()
-            .field("firstName", .string, .required)
-            .field("lastName", .string, .required)
-            .field("petsNames", .string, .required)
+            .field("name", .string, .required)
+            .field("countryCode", .string, .required)
             .create()
     }
     
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        return database.schema("reviews").delete()
+        return database.schema("circuit").delete()
     }
 }
