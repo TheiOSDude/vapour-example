@@ -1,7 +1,8 @@
 import Vapor
 import Fluent
 import FluentPostgresDriver
- 
+ import PostgresKit
+
 import GraphQLKit
 import GraphiQLVapor
 import Vapor
@@ -25,7 +26,15 @@ public func configure(_ app: Application) throws {
     
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     let url = app.environment.isRelease ? Environment.databaseURL : Environment.debugURL
-    try app.databases.use(.postgres(url: url), as: .psql)
+    
+    if var postgresConfig = PostgresConfiguration(url: url) {
+        postgresConfig.tlsConfiguration = .forClient(certificateVerification: .none)
+        app.databases.use(.postgres(
+            configuration: postgresConfig
+        ), as: .psql)
+    } else {
+        exit(-1)
+    }
     
     app.migrations.add(MigratePeople())
     try app.autoMigrate().wait()
