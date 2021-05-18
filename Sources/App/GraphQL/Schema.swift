@@ -40,15 +40,15 @@ let schema = try! Schema<Resolver, Request> {
         }
 
     }
-    Mutation {
-        Field("createCircuit", at: Resolver.createCircuit) {
-            Argument("name", at: \.name)
-            Argument("countryCode", at: \.countryCode)
-        }
-        
-        Field("deleteCircuit", at: Resolver.deleteCircuit) {
-            Argument("id", at: \.id)
-        }
-    }
+//    Mutation {
+//        Field("createCircuit", at: Resolver.createCircuit) {
+//            Argument("name", at: \.name)
+//            Argument("countryCode", at: \.countryCode)
+//        }
+//        
+//        Field("deleteCircuit", at: Resolver.deleteCircuit) {
+//            Argument("id", at: \.id)
+//        }
+//    }
 
 }
