@@ -42,6 +42,7 @@ public func configure(_ app: Application) throws {
  
     
     app.migrations.add(MigrateCircuits())
+    app.migrations.add(MigrateLayouts())
     try app.autoMigrate().wait()
     
     // Enable GraphiQL web page to send queries to the GraphQL endpoint.

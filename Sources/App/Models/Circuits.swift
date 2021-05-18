@@ -20,6 +20,8 @@ final class Circuit: Model, Content {
     @Field(key: "countryCode")
     var countryCode: String
     
+    @Children(for: \.$circuit)
+    var layouts: [Layout]
     
     init() { }
     
@@ -29,4 +31,17 @@ final class Circuit: Model, Content {
         self.countryCode = countryCode
     }
 }
+
+extension Circuit {
+  func getLayouts(
+    request: Request,
+    arguments: PaginationArguments
+  ) throws -> EventLoopFuture<[Layout]> {
+    $layouts.query(on: request.db)
+      .limit(arguments.limit)
+      .offset(arguments.offset)
+      .all()
+  }
+}
+
 

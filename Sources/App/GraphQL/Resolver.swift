@@ -8,12 +8,21 @@
 import Graphiti
 import Vapor
 
+struct PaginationArguments: Codable {
+    let limit: Int
+    let offset: Int
+}
+
 final class Resolver {
+    
     func getAllCircuits(
         request: Request,
-        arguments: NoArguments
+        arguments: PaginationArguments
     ) throws -> EventLoopFuture<[Circuit]> {
-        Circuit.query(on: request.db).all()
+        Circuit.query(on: request.db)
+            .limit(arguments.limit)
+            .offset(arguments.offset)
+            .all()
     }
     
     struct CreateCircuitArguments: Codable {
@@ -44,5 +53,30 @@ final class Resolver {
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: request.db) }
             .transform(to: true)
+    }
+    
+    func getAllLayouts(
+        request: Request,
+        arguments: PaginationArguments
+    ) throws -> EventLoopFuture<[Layout]> {
+        Layout.query(on: request.db)
+            .limit(arguments.limit)
+            .offset(arguments.offset)
+            .all()
+    }
+    
+    struct CreateLayoutArguments: Codable {
+        let circuitID: UUID
+        let name: String
+        let length: Double
+    }
+    
+    func createLayout(
+        request: Request,
+        arguments: CreateLayoutArguments
+    ) throws -> EventLoopFuture<Layout> {
+        let layout = Layout(
+            circuitID: arguments.circuitID, name: arguments.name, length: arguments.length)
+        return layout.create(on: request.db).map { layout }
     }
 }
